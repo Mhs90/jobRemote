@@ -17,15 +17,22 @@ const clickHandler = async event => {
 
     jobDetailsContentEl.innerHTML = '';
     spinnerRender("job");
+    try {
+        const jobId = jobItemEL.children[0].getAttribute('href');
+        const response = await fetch(`${BASE_API_URL}/jobs/${jobId}`);
+        if (!response.ok) {
+            throw new Error("Response not exist")
+        }
+        const data = await response.json();
+        const { jobItem } = data;
 
-    const jobId = jobItemEL.children[0].getAttribute('href');
-    const response = await fetch(`${BASE_API_URL}/jobs/${jobId}`);
-    const data = await response.json();
-    const { jobItem } = data;
+        spinnerRender("job");
 
-    spinnerRender("job");
-
-    jobDetailsHtmlRender(jobItem);
+        jobDetailsHtmlRender(jobItem);
+    } catch (err) {
+        spinnerRender("job");
+        errorRender(err)
+    }
 };
 jobListSearchEl.addEventListener('click', clickHandler);
 

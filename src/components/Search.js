@@ -28,13 +28,20 @@ const submitHandler = async event => {
     searchInputEl.blur();
 
     spinnerRender("search");
+    try {
+        const response = await fetch(`${BASE_API_URL}/jobs?search=${searchText}`);
+        if (!response.ok) {
+            throw new Error("Response not exist")
+        }
+        const data = await response.json();
+        const { jobItems } = data;
+        numberEl.textContent = jobItems.length;
 
-    const response = await fetch(`${BASE_API_URL}/jobs?search=${searchText}`);
-    const data = await response.json();
-    const { jobItems } = data;
-    numberEl.textContent = jobItems.length;
-
-    spinnerRender("search");
-    searchDetailsHtmlRender(jobItems);
+        spinnerRender("search");
+        searchDetailsHtmlRender(jobItems);
+    } catch (err) {
+        spinnerRender("job");
+        errorRender(err)
+    }
 };
 searchFormEl.addEventListener('submit', submitHandler);
