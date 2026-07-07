@@ -1,7 +1,8 @@
 import {
     jobListSearchEl,
     jobDetailsContentEl,
-    BASE_API_URL
+    BASE_API_URL,
+    errorRender
 } from '../common.js';
 
 import spinnerRender from './Spinner.js';
@@ -21,7 +22,7 @@ const clickHandler = event => {
     fetch(`${BASE_API_URL}/jobs/${jobId}`)
         .then(response => {
             if (!response.ok) {
-                console.log('wrong');
+                throw new Error("Response not exist");
                 return;
             }
             return response.json();
@@ -29,11 +30,13 @@ const clickHandler = event => {
         .then(data => {
             const { jobItem } = data;
 
-            spinnerRender("job")
+            spinnerRender("job");
 
             jobDetailsHtmlRender(jobItem);
         })
-        .catch(err => console.log(err));
+        .catch(error => {
+            errorRender(error.message);
+        });
 };
 jobListSearchEl.addEventListener('click', clickHandler);
 
