@@ -1,7 +1,5 @@
 import {
     searchInputEl,
-    errorTextEl,
-    errorEl,
     numberEl,
     jobListSearchEl,
     searchFormEl,
@@ -12,7 +10,7 @@ import errorRender from './Error.js'
 import spinnerRender from './Spinner.js';
 import { searchDetailsHtmlRender } from './searchDetails.js';
 
-const submitHandler = event => {
+const submitHandler = async event => {
     event.preventDefault();
 
     jobListSearchEl.innerHTML = '';
@@ -30,25 +28,13 @@ const submitHandler = event => {
     searchInputEl.blur();
 
     spinnerRender("search");
-    // fetch('data.json');
-    fetch(`${BASE_API_URL}/jobs?search=${searchText}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Response not exist");
-            }
 
-            return response.json();
-        })
-        .then(data => {
-            // job items           
-            const { jobItems } = data;
-            numberEl.textContent = jobItems.length;
+    const response = await fetch(`${BASE_API_URL}/jobs?search=${searchText}`);
+    const data = await response.json();
+    const { jobItems } = data;
+    numberEl.textContent = jobItems.length;
 
-            spinnerRender("search");
-            searchDetailsHtmlRender(jobItems);
-        })
-        .catch(error => {
-            errorRender(error.message);
-        });
+    spinnerRender("search");
+    searchDetailsHtmlRender(jobItems);
 };
 searchFormEl.addEventListener('submit', submitHandler);

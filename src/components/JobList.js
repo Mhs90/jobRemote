@@ -2,13 +2,13 @@ import {
     jobListSearchEl,
     jobDetailsContentEl,
     BASE_API_URL,
-    errorRender
 } from '../common.js';
 
+import errorRender from './Error.js';
 import spinnerRender from './Spinner.js';
 import { jobDetailsHtmlRender } from './jobDetails.js';
 
-const clickHandler = event => {
+const clickHandler = async event => {
     event.preventDefault();
     const jobItemEL = event.target.closest('.job-item');
 
@@ -19,24 +19,13 @@ const clickHandler = event => {
     spinnerRender("job");
 
     const jobId = jobItemEL.children[0].getAttribute('href');
-    fetch(`${BASE_API_URL}/jobs/${jobId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Response not exist");
-                return;
-            }
-            return response.json();
-        })
-        .then(data => {
-            const { jobItem } = data;
+    const response = await fetch(`${BASE_API_URL}/jobs/${jobId}`);
+    const data = await response.json();
+    const { jobItem } = data;
 
-            spinnerRender("job");
+    spinnerRender("job");
 
-            jobDetailsHtmlRender(jobItem);
-        })
-        .catch(error => {
-            errorRender(error.message);
-        });
+    jobDetailsHtmlRender(jobItem);
 };
 jobListSearchEl.addEventListener('click', clickHandler);
 
