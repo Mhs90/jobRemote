@@ -1,14 +1,15 @@
 import {
+    DEFAULT_DISPLAY_TIME,
     errorEl,
     errorTextEl
 } from '../common.js';
 
-const errorRender = message => {
+const renderError = (message = 'Somthing went wrong !!!') => {
     errorTextEl.textContent = message;
-    errorEl.classList.add("error--visible");
+    errorEl.classList.add('error--visible');
     setTimeout(() => {
         errorEl.classList.remove('error--visible');
-    }, 3000);
+    }, DEFAULT_DISPLAY_TIME);
 };
 
-export default errorRender;
+export default renderError;

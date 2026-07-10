@@ -1,6 +1,8 @@
-import { jobDetailsContentEl } from '../common.js'
+import {
+    jobDetailsContentEl
+} from '../common.js';
 
-export const jobDetailsHtmlRender = jobItem => {
+const renderJobDetailsHtml = jobItem => {
     const detail = `
         
 <img src="${jobItem.coverImgURL}" alt="#" class="job-details__cover-img">
@@ -47,8 +49,8 @@ export const jobDetailsHtmlRender = jobItem => {
             <p class="reviews__sub-text">Recent things people are saying</p>
         </div>
         <ul class="reviews__list">
-        ${jobItem.reviews.map(re => `<li class="reviews__item">${re}</li>`).join('')}
-        
+         ${jobItem.reviews.map(re => `<li class="reviews__item">${re}</li>`).join('')}
+         
             
         </ul>
     </section>
@@ -60,3 +62,5 @@ export const jobDetailsHtmlRender = jobItem => {
         `;
     jobDetailsContentEl.innerHTML = detail;
 };
+
+export default renderJobDetailsHtml;

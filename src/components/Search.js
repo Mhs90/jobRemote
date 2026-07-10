@@ -1,14 +1,16 @@
 import {
-    searchInputEl,
-    numberEl,
     jobListSearchEl,
+    searchInputEl,
     searchFormEl,
-    BASE_API_URL
+    spinnerSearchEl,
+    state,
+    numberEl,
+    BASE_API_URL,
+    getData
 } from '../common.js';
-
-import errorRender from './Error.js'
-import spinnerRender from './Spinner.js';
-import { searchDetailsHtmlRender } from './searchDetails.js';
+import renderError from './Error.js';
+import renderSpinner from './Spinner.js';
+import renderjobList from './JobList.js';
 
 const submitHandler = async event => {
     event.preventDefault();
@@ -18,30 +20,36 @@ const submitHandler = async event => {
     const searchText = searchInputEl.value;
 
     //Validation
-    const forbiddenPattern = /<script>/;
+    const forbiddenPattern = /[0-9]/;
     const patternMatch = forbiddenPattern.test(searchText);
     if (patternMatch) {
-        errorRender("your search may not contain <script>");
+        renderError('your search may not contain numbers');
+        //renderError();
         return;
     }
 
     searchInputEl.blur();
 
-    spinnerRender("search");
+    renderSpinner('search');
+
     try {
-        const response = await fetch(`${BASE_API_URL}/jobs?search=${searchText}`);
-        if (!response.ok) {
-            throw new Error("Response not exist")
-        }
-        const data = await response.json();
+        const data = await getData(`${BASE_API_URL}/jobs?search=${searchText}`);
+        //گرفتن jobitems
         const { jobItems } = data;
+
+        //Update State
+        state.searchJobItems = jobItems;
+
+        //پاک کردن اسپینر
+        renderSpinner('search');
+
         numberEl.textContent = jobItems.length;
 
-        spinnerRender("search");
-        searchDetailsHtmlRender(jobItems);
-    } catch (err) {
-        spinnerRender("job");
-        errorRender(err)
+        renderjobList();
+    } catch (error) {
+        renderSpinner('search');
+        renderError(error.userError);
+        console.log(error.message);
     }
 };
 searchFormEl.addEventListener('submit', submitHandler);
