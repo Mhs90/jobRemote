@@ -4,7 +4,8 @@ import {
     spinnerJobDetailsEl,
     BASE_API_URL,
     getData,
-    state
+    state,
+    ITEM_SIZE_PER_PAGE
 } from '../common.js';
 import renderSpinner from './Spinner.js';
 import renderJobDetailsHtml from './JobDetails.js';
@@ -14,7 +15,7 @@ const renderjobList = () => {
 
     jobListSearchEl.innerHTML = '';
 
-   state.searchJobItems.slice(0, 7).forEach(jobItem => {
+   state.searchJobItems.slice(state.currentPage * ITEM_SIZE_PER_PAGE - ITEM_SIZE_PER_PAGE, state.currentPage * ITEM_SIZE_PER_PAGE).forEach(jobItem => {
         const jobItemHtml = `
             <li class="job-item">
                         <a class="job-item__link" href="${jobItem.id}">
@@ -50,6 +51,9 @@ const clickHandler = async event => {
     spinnerJobDetailsEl.classList.add('spinner--visible');
 
     const jobId = jobItemEL.children[0].getAttribute('href');
+    
+    history.pushState(null,'',`/#${jobId}`);
+    
 
     try {
         const data = await getData(`${BASE_API_URL}/jobs/${jobId}`);

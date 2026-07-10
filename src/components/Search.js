@@ -1,4 +1,6 @@
 import {
+    sortingBtnRecentEl,
+    sortingBtnRelevantEl,
     jobListSearchEl,
     searchInputEl,
     searchFormEl,
@@ -11,13 +13,20 @@ import {
 import renderError from './Error.js';
 import renderSpinner from './Spinner.js';
 import renderjobList from './JobList.js';
+import renderPagingBtn from './Pagination.js';
+
 
 const submitHandler = async event => {
     event.preventDefault();
-
     jobListSearchEl.innerHTML = '';
     //get input search text
     const searchText = searchInputEl.value;
+
+
+    //Reset Sorting Btn
+    sortingBtnRecentEl.classList.remove('sorting__button--active');
+    sortingBtnRelevantEl.classList.add('sorting__button--active');
+
 
     //Validation
     const forbiddenPattern = /[0-9]/;
@@ -46,6 +55,8 @@ const submitHandler = async event => {
         numberEl.textContent = jobItems.length;
 
         renderjobList();
+        state.currentPage = 1;
+    renderPagingBtn();
     } catch (error) {
         renderSpinner('search');
         renderError(error.userError);
