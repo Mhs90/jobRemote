@@ -40,5 +40,6 @@ export const getData = async URL => {
 export const state = {
     searchJobItems: [],
     currentPage: 1,
-    activeJobItem: {}
+    activeJobItem: {},
+    bookmarkJobItems: []
 };

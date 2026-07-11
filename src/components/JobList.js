@@ -5,17 +5,24 @@ import {
     BASE_API_URL,
     getData,
     state,
-    ITEM_SIZE_PER_PAGE
+    ITEM_SIZE_PER_PAGE,
+    jobListBookmarksEl
 } from '../common.js';
 import renderSpinner from './Spinner.js';
 import renderJobDetailsHtml from './JobDetails.js';
 import renderError from './Error.js';
 
-const renderjobList = () => {
-
-    jobListSearchEl.innerHTML = '';
-
-    state.searchJobItems.slice(state.currentPage * ITEM_SIZE_PER_PAGE - ITEM_SIZE_PER_PAGE, state.currentPage * ITEM_SIZE_PER_PAGE).forEach(jobItem => {
+const renderjobList = (whichJobList = 'search') => {
+    const jobListEl = whichJobList === 'search' ? jobListSearchEl : jobListBookmarksEl
+    jobListEl.innerHTML = '';
+    let jobItems;
+    if (whichJobList === 'search') {
+        jobItems = state.searchJobItems.slice(state.currentPage * ITEM_SIZE_PER_PAGE - ITEM_SIZE_PER_PAGE, state.currentPage * ITEM_SIZE_PER_PAGE);
+    }
+    else {
+        jobItems = state.bookmarkJobItems;
+    }
+    jobItems.forEach(jobItem => {
         const jobItemHtml = `
             <li class="job-item ${state.activeJobItem.id == jobItem.id ? 'job-item--active' : ''}">
                         <a class="job-item__link" href="${jobItem.id}">
@@ -30,13 +37,13 @@ const renderjobList = () => {
                                 </div>
                             </div>
                             <div class="job-item__right">
-                                <i class="fa-solid fa-bookmark job-item__bookmark-icon"></i>
+                                <i class="fa-solid fa-bookmark job-item__bookmark-icon ${state.bookmarkJobItems.some(b => b.id == jobItem.id) ? "job-item__bookmark-icon--bookmarked" : ""}"></i>
                                 <time class="job-item__time">${jobItem.daysAgo}d</time>
                             </div>
                         </a>
                     </li>
             `;
-        jobListSearchEl.insertAdjacentHTML('beforeend', jobItemHtml);
+        jobListEl.insertAdjacentHTML('beforeend', jobItemHtml);
     });
 }
 
@@ -44,15 +51,16 @@ const clickHandler = async event => {
     event.preventDefault();
     const jobItemEL = event.target.closest('.job-item');
 
-    document.querySelector('.job-item--active')?.classList.remove('job-item--active');
+    document.querySelectorAll('.job-item--active').forEach(item => item.classList.remove('job-item--active'));
     jobItemEL.classList.add('job-item--active');
 
     jobDetailsContentEl.innerHTML = '';
     spinnerJobDetailsEl.classList.add('spinner--visible');
 
     const jobId = jobItemEL.children[0].getAttribute('href');
-    state.activeJobItem = state.searchJobItems.find(jobItem => jobItem.id == jobId)
-    history.pushState(null, '', `#${jobId}`);
+    const allJobItems = [...state.searchJobItems, ...state.bookmarkJobItems];
+    state.activeJobItem = allJobItems.find(jobItem => jobItem.id === +jobId);
+    history.pushState(null, '', `/#${jobId}`);
 
 
     try {
@@ -71,5 +79,6 @@ const clickHandler = async event => {
 
 };
 jobListSearchEl.addEventListener('click', clickHandler);
+jobListBookmarksEl.addEventListener('click', clickHandler);
 
 export default renderjobList;
