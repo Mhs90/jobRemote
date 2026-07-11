@@ -56,7 +56,7 @@ const submitHandler = async event => {
 
         renderjobList();
         state.currentPage = 1;
-    renderPagingBtn();
+        renderPagingBtn();
     } catch (error) {
         renderSpinner('search');
         renderError(error.userError);

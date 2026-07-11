@@ -38,6 +38,7 @@ export const getData = async URL => {
 
 //STATE
 export const state = {
-searchJobItems : [],
-currentPage: 1
+    searchJobItems: [],
+    currentPage: 1,
+    activeJobItem: {}
 };

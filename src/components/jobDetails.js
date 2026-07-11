@@ -49,8 +49,8 @@ const renderJobDetailsHtml = jobItem => {
             <p class="reviews__sub-text">Recent things people are saying</p>
         </div>
         <ul class="reviews__list">
-         ${jobItem.reviews.map(re => `<li class="reviews__item">${re}</li>`).join('')}
-         
+        ${jobItem.reviews.map(re => `<li class="reviews__item">${re}</li>`).join('')}
+        
             
         </ul>
     </section>

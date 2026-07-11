@@ -15,9 +15,9 @@ const renderjobList = () => {
 
     jobListSearchEl.innerHTML = '';
 
-   state.searchJobItems.slice(state.currentPage * ITEM_SIZE_PER_PAGE - ITEM_SIZE_PER_PAGE, state.currentPage * ITEM_SIZE_PER_PAGE).forEach(jobItem => {
+    state.searchJobItems.slice(state.currentPage * ITEM_SIZE_PER_PAGE - ITEM_SIZE_PER_PAGE, state.currentPage * ITEM_SIZE_PER_PAGE).forEach(jobItem => {
         const jobItemHtml = `
-            <li class="job-item">
+            <li class="job-item ${state.activeJobItem.id == jobItem.id ? 'job-item--active' : ''}">
                         <a class="job-item__link" href="${jobItem.id}">
                             <div class="job-item__badge">${jobItem.badgeLetters}</div>
                             <div class="job-item__middle">
@@ -51,9 +51,9 @@ const clickHandler = async event => {
     spinnerJobDetailsEl.classList.add('spinner--visible');
 
     const jobId = jobItemEL.children[0].getAttribute('href');
-    
-    history.pushState(null,'',`/#${jobId}`);
-    
+    state.activeJobItem = state.searchJobItems.find(jobItem => jobItem.id == jobId)
+    history.pushState(null, '', `#${jobId}`);
+
 
     try {
         const data = await getData(`${BASE_API_URL}/jobs/${jobId}`);
